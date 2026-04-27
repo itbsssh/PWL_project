@@ -17,7 +17,7 @@
                 <td>Nama MK</td>
                 <td>:</td>
                 <td><input type="text" name="nama_mk" value="{{$mata_kuliah->nama_mk}}" size="30"></td>
-            </tr>
+            </tr> 
             <tr>
                 <td>Sks</td>
                 <td>:</td>
