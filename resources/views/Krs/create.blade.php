@@ -60,10 +60,10 @@
             </select>
         </div>
 
-        <div class="mb-3">
+        <!-- <div class="mb-3">
             <label class="form-label">Total SKS</label>
             <input type="number" name="total_sks" class="form-control" style="width: 300px;" required>
-        </div>
+        </div> -->
 
         <button type="submit" class="btn btn-primary">Add</button>
         <button type="reset" class="btn btn-primary">Clear</button>

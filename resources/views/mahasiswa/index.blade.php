@@ -261,13 +261,14 @@
                     <p class="text-white-50 mb-0">Kelola dan lihat seluruh data mahasiswa aktif </p>
                 </div>
                 <div>
-                    <!-- Prominent CTA inside the page content -->
-                    <a href="{{ action([App\Http\Controllers\MahasiswaController::class, 'create']) }}" class="btn btn-create btn-lg">
-                        + Tambah Mahasiswa
-                    </a>
-                </div>
-            </div>
-
+                    <!-- LOGIKA TOMBOL TAMBAH -->
+            @if(auth()->user()->role === 'admin')
+                <a href="{{ action([App\Http\Controllers\MahasiswaController::class, 'create']) }}" class="btn btn-create btn-lg">+ Tambah Mahasiswa</a>
+            @else
+                <button type="button" class="btn btn-create btn-lg" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="menambah data mahasiswa">+ Tambah Mahasiswa</button>
+            @endif
+        </div>
+    </div>
             <div class="table-responsive-wrapper">
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -295,24 +296,27 @@
                                 <td>{{ $m->created_at }}</td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
-                                        <a href="{{ action([App\Http\Controllers\MahasiswaController::class, 'edit'], [$m->id]) }}" class="btn btn-action-edit">Edit</a>
-                                        <form action="{{ action([App\Http\Controllers\MahasiswaController::class, 'destroy'], [$m->id]) }}" method="post" class="m-0">
-                                            @csrf
-                                            <input type="hidden" name="_method" value="DELETE">
-                                            <button type="submit" class="btn btn-action-delete">Delete</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                        <!-- LOGIKA TOMBOL EDIT & DELETE -->
+                                @if(auth()->user()->role === 'admin')
+                                    <a href="{{ action([App\Http\Controllers\MahasiswaController::class, 'edit'], [$m->id]) }}" class="btn btn-action-edit">Edit</a>
+                                    <form action="{{ action([App\Http\Controllers\MahasiswaController::class, 'destroy'], [$m->id]) }}" method="post" class="m-0">
+                                        @csrf
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-action-delete">Delete</button>
+                                    </form>
+                                @else
+                                    <button type="button" class="btn btn-action-edit" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="mengedit data mahasiswa">Edit</button>
+                                    <button type="button" class="btn btn-action-delete" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="menghapus data mahasiswa">Delete</button>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-
     </div>
-
+</div>
     <footer>
         <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center">
             <div class="footer-logo-container mb-2 mb-sm-0">
@@ -323,7 +327,32 @@
             </p>
         </div>
     </footer>
-
+<div class="modal fade" id="adminOnlyModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #0b223f; border: 1px solid #90caf9;">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" style="color: #90caf9;">Akses Ditolak!</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <p style="font-size: 3rem;">🔒</p>
+                    <p class="text-white">Anda tidak memiliki izin untuk <strong><span id="namaFitur"></span></strong>.</p>
+                    <p class="text-white-50 small">Fitur ini hanya dapat diakses oleh Admin.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const adminOnlyModal = document.getElementById('adminOnlyModal');
+        if (adminOnlyModal) {
+            adminOnlyModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const fitur = button.getAttribute('data-fitur');
+                const namaFiturSpan = adminOnlyModal.querySelector('#namaFitur');
+                namaFiturSpan.textContent = fitur;
+            });
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

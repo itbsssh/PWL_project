@@ -189,47 +189,47 @@
     <button class="siakad-toggle btn dropdown-toggle" type="button" id="siakadMenuRight" data-bs-toggle="dropdown" aria-expanded="false">Menu SIAKAD</button>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="siakadMenuRight">
   @auth
-    <li class="dropdown-header text-dark fw-bold">Data Master (Khusus Admin)</li>
+    <li class="dropdown-header text-dark fw-bold">Menu</li>
     
     <li>
-      @if(auth()->user()->role === 'admin')
-        <a class="dropdown-item" href="/mahasiswa">Mahasiswa</a>
-      @else
-        <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Mahasiswa">Mahasiswa 🔒</a>
-      @endif
-    </li>
+  @if(auth()->user()->role === 'admin' || auth()->user()->role === 'dosen')
+    <a class="dropdown-item" href="/mahasiswa">Mahasiswa</a>
+  @else
+    <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Mahasiswa">Mahasiswa 🔒</a>
+  @endif
+</li>
 
-    <li>
-      @if(auth()->user()->role === 'admin')
-        <a class="dropdown-item" href="/dosen">Dosen</a>
-      @else
-        <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Dosen">Dosen 🔒</a>
-      @endif
-    </li>
+<li>
+  @if(auth()->user()->role === 'admin' || auth()->user()->role === 'dosen')
+    <a class="dropdown-item" href="/dosen">Dosen</a>
+  @else
+    <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Dosen">Dosen 🔒</a>
+  @endif
+</li>
 
-    <li>
-      @if(auth()->user()->role === 'admin')
-        <a class="dropdown-item" href="/jurusan">Jurusan</a>
-      @else
-        <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Jurusan">Jurusan 🔒</a>
-      @endif
-    </li>
+<li>
+  @if(auth()->user()->role === 'admin' || auth()->user()->role === 'dosen')
+    <a class="dropdown-item" href="/jurusan">Jurusan</a>
+  @else
+    <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Jurusan">Jurusan 🔒</a>
+  @endif
+</li>
 
-    <li>
-      @if(auth()->user()->role === 'admin')
-        <a class="dropdown-item" href="/matakuliah">Mata Kuliah</a>
-      @else
-        <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Mata Kuliah">Mata Kuliah 🔒</a>
-      @endif
-    </li>
+<li>
+  @if(auth()->user()->role === 'admin' || auth()->user()->role === 'dosen')
+    <a class="dropdown-item" href="/matakuliah">Mata Kuliah</a>
+  @else
+    <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Mata Kuliah">Mata Kuliah 🔒</a>
+  @endif
+</li>
 
-    <li>
-      @if(auth()->user()->role === 'admin')
-        <a class="dropdown-item" href="/kelas">Kelas</a>
-      @else
-        <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Kelas">Kelas 🔒</a>
-      @endif
-    </li>
+<li>
+  @if(auth()->user()->role === 'admin' || auth()->user()->role === 'dosen')
+    <a class="dropdown-item" href="/kelas">Kelas</a>
+  @else
+    <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#adminOnlyModal" data-fitur="Kelas">Kelas 🔒</a>
+  @endif
+</li>
 
     <li><hr class="dropdown-divider"></li>
     <li class="dropdown-header text-dark fw-bold">Akademik</li>
@@ -240,6 +240,16 @@
       @else
         <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#krsMahasiswaModal">Pendaftaran KRS 🔒</a>
       @endif
+    </li>
+    <!-- Menu Tambahan untuk Dosen -->
+    <li><hr class="dropdown-divider"></li>
+    <li class="dropdown-header text-dark fw-bold">Manajemen KRS</li>
+    <li>
+        @if(auth()->user()->role === 'dosen')
+            <a class="dropdown-item" href="{{ route('dosen.krs.index') }}">Approval KRS Mahasiswa</a>
+        @else
+            <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#dosenApprovalModal">Approval KRS Mahasiswa 🔒</a>
+        @endif
     </li>
   @else
     <li><a class="dropdown-item" href="{{ route('login') }}">Login untuk Akses SIAKAD</a></li>
@@ -441,6 +451,29 @@
         <h5 class="fw-bold text-dark">Fitur Pendaftaran KRS Terkunci</h5>
         <p class="text-muted small">
           Fitur pengisian dan pendaftaran kartu rencana studi ini telah selesai dibuat, namun berdasarkan aturan UAS, fitur ini <strong>hanya dapat diakses oleh Mahasiswa</strong>.
+        </p>
+        <p class="mb-0 small bg-light p-2 rounded text-secondary">
+          Status Akun Anda saat ini: <strong class="text-dark text-uppercase">{{ auth()->check() ? auth()->user()->role : 'Guest' }}</strong>
+        </p>
+      </div>
+      <div class="modal-footer bg-light justify-content-center">
+        <button type="button" class="btn btn-secondary px-4 btn-sm" data-bs-dismiss="modal">Mengerti</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="dosenApprovalModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title fw-bold">🔑 Akses Terbatas (Dosen Only)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-4">
+        <div class="mb-3 text-warning" style="font-size: 3rem;">⚠️</div>
+        <h5 class="fw-bold text-dark">Fitur Approval KRS Terkunci</h5>
+        <p class="text-muted small">
+          Fitur untuk melakukan proses verifikasi, approval, dan reject KRS mahasiswa ini telah selesai dibuat, namun berdasarkan aturan UAS, fitur ini <strong>hanya dapat diakses oleh Dosen</strong>.
         </p>
         <p class="mb-0 small bg-light p-2 rounded text-secondary">
           Status Akun Anda saat ini: <strong class="text-dark text-uppercase">{{ auth()->check() ? auth()->user()->role : 'Guest' }}</strong>

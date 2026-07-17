@@ -32,8 +32,8 @@ class KRSController extends Controller
     ['NIM' => $user->email], // Kriteria pencarian
     [
         'fullname' => $user->name,
-        'NISN'     => 'NISN Belum diisi',            // WAJIB: Sesuai struktur tabel Null: No
-        'alamat'   => 'Alamat Belum diisi'   // WAJIB: Sesuai struktur tabel Null: No
+        'NISN'     => 'NISN Belum diisi '. $user->email,           // WAJIB: Sesuai struktur tabel Null: No
+        'alamat'   => 'Alamat Belum diisi '   // WAJIB: Sesuai struktur tabel Null: No
     ]
 );
         $krs = KRS::where('kode_mahasiswa', $mahasiswa->id)->get();
@@ -64,52 +64,56 @@ class KRSController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
+{
+    // Validasi (total_sks dihapus dari validasi karena dihitung otomatis)
+    $request->validate([
         'semester'     => 'required',
         'tahun_ajaran' => 'required',
-        'total_sks'    => 'required|numeric',
         'kelas_id'     => 'required|array',
-        ]);
+    ]);
 
-      // PROTEKSI: Jika admin/dosen somehow mengakses via form, blokir
-        if (auth()->user()->role === 'admin' || auth()->user()->role === 'dosen') {
-            return redirect()->back()->with('error', 'Akses ditolak!');
-        }
+    if (auth()->user()->role === 'admin' || auth()->user()->role === 'dosen') {
+        return redirect()->back()->with('error', 'Akses ditolak!');
+    }
 
-        // Jembatan Otomatis: Pastikan data mahasiswa ada sebelum buat KRS
-        $mahasiswa = Mahasiswa::updateOrCreate(
-            ['NIM' => auth()->user()->email],
-            ['fullname' => auth()->user()->name,
-            'NISN'     => '0',
-        'alamat'   => 'Alamat Belum diisi'
-    ]
-);
+    $mahasiswa = Mahasiswa::updateOrCreate(
+        ['NIM' => auth()->user()->email],
+        ['fullname' => auth()->user()->name, 'NISN' => '0', 'alamat' => 'Alamat Belum diisi']
+    );
 
-        // Simpan ke tabel_krs (Header)
-        $krs = KRS::create([
-            'kode_mahasiswa' => $mahasiswa->id,
-            'tahun_ajaran'   => $request->tahun_ajaran,
-            'semester'       => $request->semester,
-            'status'         => 'Pending',
-            'total_sks'      => $request->total_sks,
-        ]);
+    // --- LOGIKA HITUNG SKS OTOMATIS ---
+    // Mengambil total SKS dari semua kelas yang dipilih (relasi ke mata_kuliah)
+    $total_sks = \App\Models\Kelas::whereIn('id', $request->kelas_id)
+                    ->get()
+                    ->sum(function($kelas) {
+                        return $kelas->mata_kuliah->sks; // Mengambil dari relasi
+                    });
+    // ----------------------------------
 
-        // Simpan ke table_krs_detail (Detail)
-        if ($krs && $request->has('kelas_id')) {
-            foreach ($request->kelas_id as $kelas_id) {
-                if ($kelas_id) {
-                    KRSDetail::create([
-                        'krs_id'   => $krs->id,
-                        'kelas_id' => $kelas_id,
-                        'status'   => 'Pending',
-                    ]);
-                }
+    // Simpan ke tabel_krs (Header)
+    $krs = KRS::create([
+        'kode_mahasiswa' => $mahasiswa->id,
+        'tahun_ajaran'   => $request->tahun_ajaran,
+        'semester'       => $request->semester,
+        'status'         => 'Pending',
+        'total_sks'      => $total_sks, // Menggunakan hasil hitungan otomatis
+    ]);
+
+    // Simpan ke table_krs_detail (Detail)
+    if ($krs && $request->has('kelas_id')) {
+        foreach ($request->kelas_id as $kelas_id) {
+            if ($kelas_id) {
+                KRSDetail::create([
+                    'krs_id'   => $krs->id,
+                    'kelas_id' => $kelas_id,
+                    'status'   => 'Pending',
+                ]);
             }
         }
-
-        return redirect()->route('krs.index')->with('success', 'KRS Berhasil Diajukan!');
     }
+
+    return redirect()->route('krs.index')->with('success', 'KRS Berhasil Diajukan!');
+}
     /**
      * Display the specified resource.
      */
@@ -149,5 +153,45 @@ class KRSController extends Controller
 
         return redirect('/krs')
             ->with('success', 'Data kelas berhasil dihapus');
+    }
+
+
+    /**
+     * Display a listing for Dosen (Approval List).
+     */
+    public function indexDosen()
+    {
+        // Hanya dosen yang bisa akses
+        if (auth()->user()->role !== 'dosen') {
+            abort(403, 'Akses Ditolak!');
+        }
+
+        $krs_list = KRS::with(['mahasiswa', 'detail.kelas.mata_kuliah'])->get();
+        
+        return view('dosen.krs_index', compact('krs_list'));
+    }
+
+    /**
+     * Process Approval or Reject by Dosen.
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        // Hanya dosen yang bisa akses
+        if (auth()->user()->role !== 'dosen') {
+            abort(403, 'Akses Ditolak!');
+        }
+
+        $request->validate([
+    'status' => 'required|in:approved,declined', // Sesuaikan dengan enum database
+]);
+
+        // Update status Header KRS
+        $krs = KRS::findOrFail($id);
+        $krs->update(['status' => $request->status]);
+
+        // Update status seluruh Detail KRS terkait
+        KRSDetail::where('krs_id', $id)->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status KRS berhasil diubah menjadi ' . $request->status);
     }
 } 
