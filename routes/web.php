@@ -12,6 +12,10 @@ use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KRSController;
 use App\Http\Controllers\KRSDetailController;
 
+Route::get('/mahasiswa/create', function () {
+    dd('CREATE ROUTE');
+});
+
 Route::get('/', function () {
     return view('dashboard');
 })->name('dashboard');
