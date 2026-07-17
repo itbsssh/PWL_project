@@ -23,9 +23,9 @@
                 <td><input type="text" name="pendidikan_terakhir" size="30"></td>
             </tr>
             <tr>
-                <td>Jurusan Id</td>
+                <td>Jurusan ID</td>
                 <td>:</td>
-                <td><input type="text" name="NIDN" size="30"></td>
+                <td><input type="text" name="jurusan_id" size="30"></td>
             </tr>
              <tr>
                 <td>Tempat Lahir</td>

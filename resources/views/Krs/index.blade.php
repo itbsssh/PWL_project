@@ -170,8 +170,8 @@
                         <th>Kode Mahasiswa</th>
                         <th>Tahun Ajaran</th>
                         <th>Semester</th>
+                        <th>Status</th>
                         <th>Total SKS</th>
-                        <th>Jurusan ID</th>
                         <th>Aksi</th>
                     </tr>
 
@@ -188,32 +188,18 @@
                         <td>{{ $r->tahun_ajaran }}</td>
                         <td>{{ $r->semester }}</td>
                         <td>{{ $r->status }}</td>
-                        <td>{{ $r->total_sks_id }}</td>
-                            <!-- EDIT -->
-                            <a href="{{ action([App\Http\Controllers\KRSController::class, 'edit'], [$d->id]) }}">
-
-                                <input type="button"
-                                    class="btn btn-primary mb-2"
-                                    value="Edit">
-
-                            </a>
-
-                            <!-- DELETE -->
-                            <form action="{{ action([App\Http\Controllers\KRSController::class, 'destroy'], [$d->id]) }}"
-                                method="post">
-
-                                @csrf
-
-                                <input type="hidden"
-                                    name="_method"
-                                    value="DELETE">
-
-                                <input type="submit"
-                                    class="btn btn-secondary"
-                                    value="Delete">
-
-                            </form>
-
+                        <td>{{ $r->total_sks}}</td>
+                        <td> 
+                            <a href="{{ action([App\Http\Controllers\KRSController::class, 'show'], $r->id)}}"  clas="button">
+                  <input type="button" class="btn btn-primary mb-2" value="View">
+                </a>
+                <form action="{{ action([App\Http\Controllers\KRSController::class, 'destroy'], $r->id)}}"  method="post">
+                    @csrf
+                    <input type="hidden" name="id" value="{{$r->id}}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="submit" class="btn btn-secondary" value="Delete">
+                </form>   
+                       
                         </td>
 
                     </tr>

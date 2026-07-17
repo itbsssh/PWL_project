@@ -3,7 +3,7 @@
             @csrf
         <table>
             <tr>
-                <td>Jurusan Id</td>
+                <td>Jurusan ID</td>
                 <td>:</td>
                 <td><input type="text" name="jurusan_id" size="30"></td>
             </tr>
@@ -18,12 +18,12 @@
                 <td><input type="text" name="nama_mk" size="30"></td>
             </tr>
             <tr>
-                <td>Sks</td>
+                <td>SKS</td>
                 <td>:</td>
                 <td><input type="text" name="sks" size="30"></td>
             </tr>
             <tr>
-                <td>Dosen Id</td>
+                <td>Dosen ID</td>
                 <td>:</td>
                 <td><input type="text" name="dosen_id" size="30"></td>
             </tr>

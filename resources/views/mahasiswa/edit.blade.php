@@ -31,7 +31,7 @@
              <tr>
                 <td>Alamat</td>
                 <td>:</td>
-                <td><textarea name="Alamat" rows="4" cols="30">{{$mahasiswa->alamat}}</textarea></td>
+                <td><textarea name="alamat" rows="4" cols="30">{{$mahasiswa->alamat}}</textarea></td>
             </tr>
         </table>
         <button type="submit">Add</button>

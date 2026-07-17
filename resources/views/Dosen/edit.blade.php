@@ -21,12 +21,12 @@
             <tr>
                 <td>Pendidikan Terakhir</td>
                 <td>:</td>
-                <td><input type="text" name="pendidikan_terakhir" value="{{$dosen->NIDN}}" size="30"></td>
+                <td><input type="text" name="pendidikan_terakhir" value="{{$dosen->pendidikan_terakhir}}" size="30"></td>
             </tr>
             <tr>
-                <td>Jurusan Id</td>
+                <td>Jurusan ID</td>
                 <td>:</td>
-                <td><input type="text" name="jurusan_id" value="{{$dosen->NIDN}}" size="30"></td>
+                <td><input type="text" name="jurusan_id" value="{{$dosen->jurusan_id}}" size="30"></td>
             </tr>
              <tr>
                 <td>Tempat Lahir</td>
@@ -41,7 +41,7 @@
              <tr>
                 <td>Alamat</td>
                 <td>:</td>
-                <td><textarea name="Alamat" rows="4" cols="30">{{$dosen->alamat}}</textarea></td>
+                <td><textarea name="alamat" rows="4" cols="30">{{$dosen->alamat}}</textarea></td>
             </tr>
         </table>
         <button type="submit">Add</button>

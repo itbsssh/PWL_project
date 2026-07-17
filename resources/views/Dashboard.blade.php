@@ -172,8 +172,8 @@
           <div class="dropdown">
             <button class="user-btn btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">{{ auth()->user()->name }}</button>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
-              <li><hr class="dropdown-divider"></li>
+              <!-- <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li> -->
+              <!-- <li><hr class="dropdown-divider"></li> -->
               <li>
                 <form action="{{ route('logout') }}" method="POST">@csrf<button type="submit" class="dropdown-item text-danger">Logout</button></form>
               </li>
@@ -233,8 +233,14 @@
 
     <li><hr class="dropdown-divider"></li>
     <li class="dropdown-header text-dark fw-bold">Akademik</li>
-    <li><a class="dropdown-item" href="/krs">Pendaftaran KRS</a></li>
-
+    <li>
+      {{-- Jika yang login adalah mahasiswa, dia bisa masuk. Jika admin/dosen, lempar ke modal --}}
+      @if(auth()->user()->role === 'mahasiswa')
+        <a class="dropdown-item" href="/krs">Pendaftaran KRS</a>
+      @else
+        <a class="dropdown-item text-muted" href="#" data-bs-toggle="modal" data-bs-target="#krsMahasiswaModal">Pendaftaran KRS 🔒</a>
+      @endif
+    </li>
   @else
     <li><a class="dropdown-item" href="{{ route('login') }}">Login untuk Akses SIAKAD</a></li>
   @endauth
@@ -423,7 +429,29 @@
     </div>
   </div>
 </div>
-
+<div class="modal fade" id="krsMahasiswaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title fw-bold">🔑 Akses Terbatas (Mahasiswa Only)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center p-4">
+        <div class="mb-3 text-warning" style="font-size: 3rem;">⚠️</div>
+        <h5 class="fw-bold text-dark">Fitur Pendaftaran KRS Terkunci</h5>
+        <p class="text-muted small">
+          Fitur pengisian dan pendaftaran kartu rencana studi ini telah selesai dibuat, namun berdasarkan aturan UAS, fitur ini <strong>hanya dapat diakses oleh Mahasiswa</strong>.
+        </p>
+        <p class="mb-0 small bg-light p-2 rounded text-secondary">
+          Status Akun Anda saat ini: <strong class="text-dark text-uppercase">{{ auth()->check() ? auth()->user()->role : 'Guest' }}</strong>
+        </p>
+      </div>
+      <div class="modal-footer bg-light justify-content-center">
+        <button type="button" class="btn btn-secondary px-4 btn-sm" data-bs-dismiss="modal">Mengerti</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
   const adminOnlyModal = document.getElementById('adminOnlyModal');
   if (adminOnlyModal) {
@@ -434,6 +462,8 @@
       namaFiturSpan.textContent = fitur;
     });
   }
+
+
 </script>
 </body>
 </html>

@@ -30,7 +30,7 @@
                 <li><a class="dropdown-item" href="{{ action([App\Http\Controllers\MahasiswaController::class, 'index']) }}">Mahasiswa</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{{ action([App\Http\Controllers\JurusanController::class, 'index']) }}">Jurusan</a></li>
-                <li><a class="dropdown-item" href="{{ action([App\Http\Controllers\MataKuliahController::class, 'index']) }}">Mata Kuliah</a></li>
+                <li><a class="dropdown-item" href="{{ action([App\Http\Controllers\MatakuliahController::class, 'index']) }}">Mata Kuliah</a></li>
               </ul>
             </li>
             <!-- <li class="nav-item">
@@ -47,9 +47,9 @@
     <div class="container">
       <div class="row align-items-start">
         <div class="col left">
-          <b>{{ $krs->mahasiswa->Fullname }}</b><br/>
+          <b>{{ $krs->mahasiswa->fullname }}</b><br/>
           {{ $krs->mahasiswa->NIM }}<br/>
-          {{ $krs->mahasiswa->NIDN }}<br/>
+          {{ $krs->mahasiswa->NISN }}<br/>
         </div>
         <div class="col">
           Tahun Ajaran {{ $krs->tahun_ajaran }}<br/>
@@ -71,9 +71,9 @@
         @foreach ($krs->detail as $k)
         <tr>
             <td>{{$k->id}}</td>
-            <td>{{$k->kelas->matakuliah->Kode_Mata_Kuliah}}</td>
-            <td>{{$k->kelas->matakuliah->Nama_Mata_Kuliah}}</td>
-            <td>{{$k->kelas->dosen->Fullname}}</td>
+            <td>{{$k->kelas->mata_kuliah->kode_mk}}</td>
+            <td>{{$k->kelas->mata_kuliah->nama_mk}}</td>
+            <td>{{$k->kelas->dosen->fullname}}</td>
             <td>{{$k->kelas->hari}}, {{ $k->kelas->jam }}</td>
             <td>{{$k->kelas->ruang_kelas}}</td>
             <td>{{$k->status}}</td>

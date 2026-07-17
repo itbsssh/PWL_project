@@ -342,13 +342,25 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Daftar Sebagai</label>
-        <select name="role" id="role" class="form-control form-select text-white" style="background-color: rgba(16, 28, 54, 0.8);" required>
-            <option value="mahasiswa" class="text-dark" selected>Mahasiswa</option>
-            <option value="dosen" class="text-dark">Dosen/Pengajar</option>
-        </select>
-    </div>
+    <label class="form-label">Daftar Sebagai</label>
+    <select name="role" id="role-select" class="form-select" onchange="toggleAdminKey()" required>
+        <option value="mahasiswa">Mahasiswa</option>
+        <option value="dosen">Dosen</option>
+        <option value="admin">Admin</option>
+    </select>
+</div>
 
+<div class="mb-3" id="admin-key-group" style="display: none;">
+
+ <div class="alert alert-info border-0 shadow-sm mb-3" style="background-color: rgba(255, 255, 255, 0.1); color: #fff;">
+    📌 <small><strong>Khusus untuk Pengujian UAS:</strong> Untuk mendaftar sebagai Admin, gunakan kode kunci <strong>Admin-24210030</strong> saat memilih role Administrator.</small>
+</div>
+
+<div class="mb-3">
+    <label class="form-label text-danger fw-bold">🔑 Masukkan Kode Kunci Admin</label>
+    <input type="password" name="admin_key" class="form-control border-danger" placeholder="Masukkan kode rahasia admin">
+</div>
+</div>
     <button type="submit" class="btn btn-register w-100 mb-2">
         SIGN UP
     </button>
@@ -378,5 +390,16 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleAdminKey() {
+        const role = document.getElementById('role-select').value;
+        const keyGroup = document.getElementById('admin-key-group');
+        if (role === 'admin') {
+            keyGroup.style.display = 'block';
+        } else {
+            keyGroup.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>

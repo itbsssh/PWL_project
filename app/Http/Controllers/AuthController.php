@@ -70,24 +70,40 @@ class AuthController extends Controller
     //Register
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        // 1. Definisikan aturan validasi dasar
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-        ]);
+            'role' => 'required|string'
+        ];
 
+        // 2. Buat validator dasar
+        $validator = Validator::make($request->all(), $rules);
+
+        // 3. Tambahkan validasi kustom secara manual untuk Kunci Admin jika role-nya 'admin'
+        $validator->after(function ($validator) use ($request) {
+            if ($request->get('role') === 'admin') {
+                if ($request->get('admin_key') !== 'Admin-24210030') {
+                    $validator->errors()->add('admin_key', 'Kode Kunci Admin salah atau belum diisi!');
+                }
+            }
+        });
+
+        // 4. Jika ada validasi yang gagal (baik password < 6, maupun kunci admin salah)
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
 
+        // 5. Jika sukses, simpan user baru
         $user = User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
-        'role' => $request->get('role'),
-            ]);
+            'role' => $request->get('role'),
+        ]);
 
-        return redirect(route('mahasiswa.index'));
+        return redirect(route('login'));
     }
 
     // User login
@@ -106,7 +122,7 @@ class AuthController extends Controller
             // (optional) Attach the role to the token.
             // $token = Auth::claims(['role' => $user->role])->fromUser($user);
             
-            return redirect(route('mahasiswa.index'), 302, ['Authorization' => 'Bearer ' . $token]);
+            return redirect(route('dashboard'), 302, ['Authorization' => 'Bearer ' . $token]);
         } catch (Exception $e) {
             return response()->json(['error' => 'Could not create token'], 500);
         }

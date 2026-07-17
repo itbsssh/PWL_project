@@ -22,18 +22,9 @@ class KelasController extends Controller
      */
     public function create()
     {
-        // contoh dummy dropdown
-        $mata_kuliah = [
-            1 => 'Bisnis Digital',
-            2 => 'Sistem Teknologi dan Informasi',
-            3 => 'Kewirausahaan'
-        ];
-
-        $dosen = [
-            1 => 'Kevin',
-            2 => 'Jonathan',
-            3 => 'Aprianto'
-        ];
+        // Mengambil data asli dari database dengan format [id => nama]
+        $mata_kuliah = \App\Models\MataKuliah::pluck('nama_mk', 'id');
+        $dosen = \App\Models\Dosen::pluck('fullname', 'id');
 
         return view('kelas.create', compact('mata_kuliah', 'dosen'));
     }
